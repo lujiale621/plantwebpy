@@ -7,7 +7,7 @@ def index(request):
     print("index html")
     return HttpResponse("hello you are at the index page")
 class dealer():
-        def dealres(self,flag,msg):
+        def dealres(self,flag,msg,event):
             ms = {}
             filt=flag
             print("dealer function ")
@@ -18,6 +18,7 @@ class dealer():
               ms['code'] = 1
               ms['message'] = '成功'
             ms['data']=msg 
+            ms['event']=event
             presendmsg = json.dumps(ms, ensure_ascii=False)
             print(presendmsg)
             send=presendmsg.encode('utf-8')
@@ -27,8 +28,7 @@ def initgpio():
     GPIO.setup(24,GPIO.OUT)
 class Dht11Get(View):
     def get(self,request):
-         print("dht11")
-         return HttpResponse('wendutest')
+         return HttpResponse(dealer().dealres(1,23,"dht11 get data"))
 class Pumb(View):
     def get(self,request):
         print("pumb")
@@ -36,10 +36,10 @@ class Pumb(View):
         msg=request.GET.get('msg')
         if msg=="open":
            GPIO.output(24,GPIO.HIGH) 
-           return HttpResponse(msg)
+           return HttpResponse(dealer().dealres(1,msg,"pumb open"))
         elif msg=="close":
            GPIO.output(24,GPIO.LOW)
-           return HttpResponse(msg)
+           return HttpResponse(dealer().dealres(1,msg,"pumb close"))
 
 # Create your views here.
 
