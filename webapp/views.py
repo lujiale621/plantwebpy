@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import View
 import json
 import RPi.GPIO as GPIO
+import webapp.src.dht11.Adafruit_Python_DHT.examples.simpletest as dht
 def index(request):
     print("index html")
     return HttpResponse("hello you are at the index page")
@@ -29,9 +30,14 @@ def initgpio():
     GPIO.setup(25,GPIO.OUT)
     GPIO.setup(12,GPIO.OUT)
     GPIO.setup(16,GPIO.OUT)
+class SoilGet(View):
+    def get(self,request):
+        msg=request.GET.get('msg')
+        return HttpResponse(dealer().dealres(1,msg,"coisture get data"))
 class Dht11Get(View):
     def get(self,request):
-         return HttpResponse(dealer().dealres(1,23,"dht11 get data"))
+         value=dht.getmid()
+         return HttpResponse(dealer().dealres(1,value,"dht11 get data"))
 class Pumb(View):
     def get(self,request):
         initgpio()
