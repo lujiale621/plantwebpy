@@ -3,7 +3,14 @@ from django.http import HttpResponse
 from django.views.generic import View
 import json
 import RPi.GPIO as GPIO
-import webapp.src.dht11.Adafruit_Python_DHT.examples.simpletest as dht
+import webapp.src.dht11test.dht11start as dht
+import requests
+
+header = {
+
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36",
+
+            }
 def index(request):
     print("index html")
     return HttpResponse("hello you are at the index page")
@@ -30,14 +37,26 @@ def initgpio():
     GPIO.setup(25,GPIO.OUT)
     GPIO.setup(12,GPIO.OUT)
     GPIO.setup(16,GPIO.OUT)
+class DeepGet(View):
+    def get(self,request):
+        msg=request.GET.get('msg')
+        url="http://192.168.1.100:8080/penzai/insert?"+"name=putdeepget&"+"data="+str(msg)
+        requests.get(url,headers=header)
+        return HttpResponse(dealer().dealres(1,msg,"coisture get data"))
 class SoilGet(View):
     def get(self,request):
         msg=request.GET.get('msg')
+       # url="http://192.168.1.100:8080/penzai/insert?"+"name=putsoilget&"+"data="+str(msg)
+#        requests.get(url,headers=header)
         return HttpResponse(dealer().dealres(1,msg,"coisture get data"))
 class Dht11Get(View):
     def get(self,request):
-         value=dht.getmid()
-         return HttpResponse(dealer().dealres(1,value,"dht11 get data"))
+         dht11 = dht.DHT11(23)
+         ret,temp,humi = dht11.GetTemp()
+         st="temp:"+str(temp)+"hum:"+str(humi)
+#         url="http://192.168.1.100:8080/penzai/insert?"+"name=putdht11&"+"data="+str(value)
+#         requests.get(url,headers=header)
+         return HttpResponse(dealer().dealres(1,st,"dht11 get data"))
 class Pumb(View):
     def get(self,request):
         initgpio()
