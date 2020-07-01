@@ -1,0 +1,12 @@
+[Unit]
+Description=uWSGI Emperor
+After=syslog.target
+[Service]
+ExecStart=/usr/local/bin/uwsgi --emperor /etc/uwsgi/vassals/ --daemonize /var/log/uwsgi_emperor.log
+RuntimeDirectory=uwsgi
+KillSignal=SIGQUIT
+Restart=on-failure
+Type=forking
+[Install]
+WantedBy=multi-user.target
+

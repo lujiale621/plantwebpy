@@ -4,6 +4,7 @@ from django.views.generic import View
 import json
 import RPi.GPIO as GPIO
 import webapp.src.dht11test.dht11start as dht
+import webapp.src.gy30.light as igt
 import requests
 
 header = {
@@ -37,25 +38,36 @@ def initgpio():
     GPIO.setup(25,GPIO.OUT)
     GPIO.setup(12,GPIO.OUT)
     GPIO.setup(16,GPIO.OUT)
+class LightGet(View):
+    def get(self,request):
+        light=igt.getlight()
+        data={'data':light,'name':'putlight'}
+        url="http://192.168.1.109:8080/penzai/insert"
+        requests.post(url,data,headers=header)
+        return HttpResponse(dealer().dealres(1,light,"coisture get data"))
 class DeepGet(View):
     def get(self,request):
         msg=request.GET.get('msg')
-        url="http://192.168.1.100:8080/penzai/insert?"+"name=putdeepget&"+"data="+str(msg)
-        requests.get(url,headers=header)
+        url="http://192.168.1.109:8080/penzai/insert"
+        data={'data':msg,'name':'putdeepget'}
+        requests.post(url,data,headers=header)
         return HttpResponse(dealer().dealres(1,msg,"coisture get data"))
 class SoilGet(View):
     def get(self,request):
         msg=request.GET.get('msg')
-       # url="http://192.168.1.100:8080/penzai/insert?"+"name=putsoilget&"+"data="+str(msg)
-#        requests.get(url,headers=header)
+        data={'data':msg,'name':'putsoilget'}
+        #url="http://192.168.1.109:8080/penzai/insert?"+"name=putsoilget&"+"data="+str(msg)
+        url="http://192.168.1.109:8080/penzai/insert"
+        requests.post(url,data,headers=header)
         return HttpResponse(dealer().dealres(1,msg,"coisture get data"))
 class Dht11Get(View):
     def get(self,request):
          dht11 = dht.DHT11(23)
          ret,temp,humi = dht11.GetTemp()
          st="temp:"+str(temp)+"hum:"+str(humi)
-#         url="http://192.168.1.100:8080/penzai/insert?"+"name=putdht11&"+"data="+str(value)
-#         requests.get(url,headers=header)
+         data={'data':st,'name':'putdht11'}
+         url="http://192.168.1.109:8080/penzai/insert"
+         requests.post(url,data,headers=header)
          return HttpResponse(dealer().dealres(1,st,"dht11 get data"))
 class Pumb(View):
     def get(self,request):

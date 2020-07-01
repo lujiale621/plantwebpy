@@ -8,5 +8,6 @@ urlpatterns = [
         path('spray',Spray.as_view()),
         path('moudle',Moudlebat.as_view()),
         path('soilmid',SoilGet.as_view()),
-        path('deep',DeepGet.as_view())
+        path('deep',DeepGet.as_view()),
+        path('light',LightGet.as_view())
         ]
